@@ -1,0 +1,10 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dl
+
+# Key
+key.ppk
+
+# Config
+config.env
