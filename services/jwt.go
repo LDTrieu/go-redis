@@ -15,6 +15,8 @@ import (
 var (
 	JwtObj                 *jwtProvider
 	ErrKeyMustBePEMEncoded = errors.New("invalid key: Key must be a PEM encoded PKCS1 or PKCS8 key")
+	ErrNotRSAPrivateKey    = errors.New("key is not a valid RSA private key")
+	ErrNotRSAPublicKey     = errors.New("key is not a valid RSA public key")
 )
 
 type jwtProvider struct {

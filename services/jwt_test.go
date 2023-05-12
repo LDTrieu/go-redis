@@ -1,12 +1,50 @@
 package services
 
 import (
-	"log"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"os"
 	"testing"
 )
 
+var (
+	privKeyPath = "../private_key.pem"
+	pubKeyPath  = "../public_key.pem"
+)
+
 func TestNewJWT(t *testing.T) {
-	key, _ := os.ReadFile("private_key.pem")
-	log.Println(key)
+	/* private-key */
+	signBytes, err := os.ReadFile(privKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	block, _ := pem.Decode(signBytes)
+
+	var parsedKey interface{}
+	if parsedKey, err = x509.ParsePKCS1PrivateKey(block.Bytes); err != nil {
+		t.Fatal(err)
+	}
+
+	var ok bool
+	if _, ok = parsedKey.(*rsa.PrivateKey); !ok {
+		t.Fatal(ErrNotRSAPrivateKey)
+	}
+
+	/* public-key */
+	signBytes, err = os.ReadFile(pubKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	block, _ = pem.Decode(signBytes)
+
+	if parsedKey, err = x509.ParsePKIXPublicKey(block.Bytes); err != nil {
+		t.Fatal(err)
+	}
+	if _, ok = parsedKey.(*rsa.PublicKey); !ok {
+		t.Fatal(ErrNotRSAPublicKey)
+	}
+
 }
