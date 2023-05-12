@@ -5,14 +5,16 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"ldt/go-redis/config"
 	"time"
+
+	"ldt/go-redis/config"
 
 	"github.com/golang-jwt/jwt"
 )
 
 var (
-	JwtObj *jwtProvider
+	JwtObj                 *jwtProvider
+	ErrKeyMustBePEMEncoded = errors.New("invalid key: Key must be a PEM encoded PKCS1 or PKCS8 key")
 )
 
 type jwtProvider struct {
@@ -55,7 +57,6 @@ func NewJWT(cfg config.Config) error {
 
 	return nil
 }
-
 func (j *jwtProvider) CreateToken(uid string) (string, error) {
 	t := jwt.New(jwt.SigningMethodRS256)
 	t.Claims = &UserClaim{

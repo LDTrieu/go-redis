@@ -5,6 +5,7 @@
 
 # Key
 key.ppk
+*.pem
 
 # Config
 config.env
