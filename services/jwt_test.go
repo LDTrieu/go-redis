@@ -19,8 +19,10 @@ func TestNewJWT(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	block, _ := pem.Decode(signBytes)
+	var block *pem.Block
+	if block, _ = pem.Decode(signBytes); block == nil {
+		t.Fatal(ErrKeyMustBePEMEncoded)
+	}
 
 	var parsedKey interface{}
 	if parsedKey, err = x509.ParsePKCS1PrivateKey(block.Bytes); err != nil {
@@ -38,8 +40,9 @@ func TestNewJWT(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	block, _ = pem.Decode(signBytes)
-
+	if block, _ = pem.Decode(signBytes); block == nil {
+		t.Fatal(ErrKeyMustBePEMEncoded)
+	}
 	if parsedKey, err = x509.ParsePKIXPublicKey(block.Bytes); err != nil {
 		t.Fatal(err)
 	}
