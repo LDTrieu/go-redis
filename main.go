@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -49,6 +50,13 @@ var (
 
 	temp, _ = utils.ParseTemplateDir("./templates")
 )
+
+func renderBase(w http.ResponseWriter, tmpl *template.Template) {
+	err := tmpl.ExecuteTemplate(w, "base.html", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
 
 func init() {
 	cfg, err := config.LoadConfig(".")
@@ -128,6 +136,7 @@ func main() {
 
 	startGrpcServer(cfg)
 }
+
 func startGinServer(config config.Config) {
 	value, err := redisclient.Get("test").Result()
 
